@@ -30,4 +30,4 @@ Liner Regression | 0.09
 
 
 ## Conclusion
-In this project, I tried to make predictions with different Regression models and compared metric results for the diffremt models. Ensemble learning performs better than the other models. Futhet by tuning model hyperparameter, I was able to imporve the model accuracy.
+In this project, I tried to make predictions with different Regression models and compared their metric results. Ensemble learning performed better than the other models. Futher by tuning the model's hyperparameter, I was able to imporve the model accuracy.
