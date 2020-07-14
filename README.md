@@ -11,9 +11,9 @@ The Datset consist of 4895 observatuon and has been updated since 2008 until 201
 
 ## Approach
 
-1. Implemented descriptive statistics and visualization techniques to understand the data.\
-2. Performed data cleansing to remove outliers and normalize skewed data.\
-3. Implemented Linear Regression and Tree regression using randomForest, Gradient Boosting to predict price.\
+1. Implemented descriptive statistics and visualization techniques to understand the data.
+2. Performed data cleansing to remove outliers and normalize skewed data.
+3. Implemented Linear Regression and Tree regression using randomForest, Gradient Boosting to predict price.
 4. Performed full grid search to optimize the model by tuning its hyperparameter. Achieved an accuracy of 60%.
 
 ## Model Comparison
