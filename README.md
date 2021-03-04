@@ -1,13 +1,13 @@
 # Regression Analysis of NYC Airbnb Data
 ## Overview
-For this project I have decided to use The NYC Airbnb dataset from Kaggle.com. Airbnb is a short version of it is original name AirBedandBreakfast.com and today it has become one of a kind service that is used and recognized by the whole world. Guests and hosts use Airbnb to expand on travelling possibilities and present a more unique and personalized tourism experiences. These millions of listings generate lot of data that can be analyzed and used for business decisions, understanding of customers & providers behavior and performance on the platform. This dataset offers us with all the information we could use to find out more about guests hosts, geographical availability, necessary metrics to make predictions and draw conclusions.  
+For this project I have decided to use The NYC Airbnb dataset from Kaggle.com. Airbnb is a short version of it is original name AirBedandBreakfast.com and today it has become one of a kind service that is used and recognized by the whole world.Airbnb’s are becoming increasingly popular places for travelers of all ages to stay. Families, business professionals and solo travelers are all turning to Airbnb as an alternative to a traditional hotel room.These millions of listings generate lot of data that can be analyzed and used for business decisions, understanding of customers & providers behavior and performance on the platform. The flexibility of price, options of amenities as well as spread out location make them an appealing option for travelers.
 
 ## Goal
-The aim of the project is to analyse the diffrent features and build ML model to predict price.
+The idea of picking a property can seem daunting, however with careful analysis and data, determining neighborhood price can be narrowed down to make decision making easier. The aim of the project is to analyse the diffrent features and build ML model to predict price.  
 
 
 ## About the Dataset
-The Datset consist of 4895 observatuon and has been updated since 2008 until 2019 this year and is about Airbnb listings for different hosts in the boroughs of NYC. It offers detailed information regarding the price, number of reviews per month and its availability throughout the year.
+The Datset consist of 4895 observatuon and has been updated since 2008 until 2019 and is about Airbnb listings for different hosts in the boroughs of NYC. It offers detailed information regarding the price, number of reviews per month and its availability throughout the year.
 
 ## Approach
 
