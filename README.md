@@ -7,7 +7,7 @@ The idea of picking a property can seem daunting, however with careful analysis 
 
 
 ## About the Dataset
-The Datset consist of 4895 observatuon and has been updated since 2008 until 2019 and is about Airbnb listings for different hosts in the boroughs of NYC. It offers detailed information regarding the price, number of reviews per month and its availability throughout the year.
+The Datset is about Airbnb listings for different hosts in the boroughs of NYC. consist of 4895 observatuon and has been updated since 2008 until 2019 and offers detailed information regarding the price, number of reviews per month and its availability throughout the year.
 
 ## Approach
 
