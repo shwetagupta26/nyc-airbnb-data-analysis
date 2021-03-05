@@ -2,7 +2,7 @@
 
 ## Overview
 
-For this project I have decided to use The NYC Airbnb dataset from Kaggle.com. Airbnb is a short version of it is original name AirBedandBreakfast.com and today it has become one of a kind service that is used and recognized by the whole world.Airbnb’s are becoming increasingly popular places for travelers of all ages to stay. Families, business professionals and solo travelers are all turning to Airbnb as an alternative to a traditional hotel room.These millions of listings generate lot of data that can be analyzed and used for business decisions, understanding of customers & providers behavior and performance on the platform. The flexibility of price, options of amenities as well as spread out location make them an appealing option for travelers.
+For this project I have decided to use The NYC Airbnb dataset from Kaggle.com. Airbnb is a short version of it is original name AirBedandBreakfast.com and today it has become one of a kind service that is used and recognized by the whole world. Airbnb’s are becoming increasingly popular places for travelers of all ages to stay. Families, business professionals and solo travelers are all turning to Airbnb as an alternative to a traditional hotel room. The flexibility of price, options of amenities as well as spread out location make them an appealing option for travelers.These millions of listings generate lot of data that can be analyzed and used for business decisions, understanding of customers & providers behavior and performance on the platform. 
 
 ## Goal
 
