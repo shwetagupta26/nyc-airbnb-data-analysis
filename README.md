@@ -38,7 +38,8 @@ It offers detailed information regarding the price, number of reviews per month 
 
 * Using Ensemble method the accuracy was further improved to 54%.
 
-* By Binning the price into low, medium and High and
+* By Binning the price into low, medium and High groups improved the model accuracy to 70%.
+
 
 
 ## Model Comparison
@@ -55,4 +56,11 @@ Liner Regression | 0.09
 
 
 ## Conclusion
-In this project, I tried to make predictions with different Regression models and compared their metric results. Ensemble learning performed better than the other models. Futher by tuning the model's hyperparameter, I was able to imporve the model accuracy.
+
+Random Forest model gives us the best score in R2 as well as MSE. However, running time of the Random Forest model is more than other models.
+
+## What can be Done to improve accuracy
+
+* Collect more data with more variables.
+* Models can be trained in lots of parameters to see which one is best. Since it took so much time, I did not train in every possible of combination.
+* Try SVM and Neural Netwroks.
