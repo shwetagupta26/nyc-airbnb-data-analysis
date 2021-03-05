@@ -32,13 +32,13 @@ It offers detailed information regarding the price, number of reviews per month 
 
 ![Price_skew](https://user-images.githubusercontent.com/53157141/110054934-0a4f4e00-7d2a-11eb-9807-95871aabe7f0.png)
 
-* After imputing the missing values, removinf outliers and transforming the output variable, Linear model accuracy improved.
+* After imputing the missing values, removing outliers and transforming (lograthmic transformation) the output variable, Linear model accuracy improved.
 
 ![Linear_log_linear](https://user-images.githubusercontent.com/53157141/110055744-86966100-7d2b-11eb-99f8-769cfb570710.JPG)
 
-* Using Ensemble method the accuracy was further improved to 54%.
+* Using Ensemble method the accuracy was further improved.
 
-* By Binning the price into low, medium and High groups improved the model accuracy to 70%.
+* By Binning the price into low, medium and High groups, achieved the highest model accuracy of 70%.
 
 
 
