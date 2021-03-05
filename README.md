@@ -44,7 +44,7 @@ It offers detailed information regarding the price, number of reviews per month 
 
 ## Model Comparison
 
-Model	| Model Accuracy
+Model	| RSquared
 ------| --------------
 Gradient Boost Tree(binning price) |	0.70
 Random Forest |	0.54
