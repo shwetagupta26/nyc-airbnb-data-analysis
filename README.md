@@ -46,7 +46,7 @@ It offers detailed information regarding the price, number of reviews per month 
 
 Model	| RSquared
 ------| --------------
-Gradient Boost Tree(binning price) |	```diff  - 0.70 ```
+Gradient Boost Tree(binning price) |	<font color="red"> 0.70 </font>
 Random Forest |	0.54
 Random Forest (Grid Search)	| 0.53
 Gradient Boost Tree	| 0.52
