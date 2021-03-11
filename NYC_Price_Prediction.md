@@ -693,4 +693,4 @@ Gradient Boosting
 
 <P>
 
-<BR> The Model accuracy didn’t improve compared to Random Forest.
+<BR> Among all the model, Random Forest has the highest accuracy. Still the accuracy is not good enough to be used as the Final model.
