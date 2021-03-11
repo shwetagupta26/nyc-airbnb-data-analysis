@@ -1,0 +1,396 @@
+---
+title: "Regression Analysis of NYC Airbnb Data"
+author: "Shweta Gupta"
+output: github_document
+---
+<BR>
+<Center>
+<BR>
+<B>For this project I have decided to use The NYC Airbnb dataset from Kaggle.com. I have chosen New York City as it is one of the largest and most popular tourist destinations in the world with a large amount of Airbnb listings.<B>
+<BR>
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(corrplot)
+library(dplyr)
+library(tidyverse)
+library(ggthemes)
+library(ggExtra)
+library(caret)
+library(glmnet)
+library(corrplot)
+library(leaflet)
+library(kableExtra)
+library(RColorBrewer)
+library(plotly)
+library(rpart)
+library(fastDummies)
+library(xgboost)
+library(h2o)
+airbnbdata <-  read.csv("AB_NYC_2019.csv")
+```
+<P>
+<BR>
+<B><font size = 5>
+EDA
+</font></B>
+<BR>
+<P>The Datset is about Airbnb listings for different hosts in the boroughs of NYC. It Consist of 48895 observatuon with 16 variable. It offers detailed information regarding the price, number of reviews per month and its availability throughout the year.
+
+```{r, echo=FALSE}
+summary(airbnbdata)
+```
+
+```{r, echo=FALSE}
+str(airbnbdata)
+airbnbdata$last_review <- as.Date(airbnbdata$last_review)
+```
+<BR>
+<P> Lets visualize the missing values in the data
+```{r, echo=FALSE}
+#install.packages(VIM)
+library(VIM)
+aggr_plot <-
+  aggr(
+    airbnbdata,
+    col = c('navyblue', 'red'),
+    numbers = TRUE,
+    sortVars = TRUE,
+    labels = names(data),
+    cex.axis = .5,
+    gap = 0.5,
+    cex.numbers=0.8,
+    ylab = c("Histogram of missing data", "Pattern")
+  )
+```
+<BR>
+<P>As we can see above, the 'last_review' attribute contains only the dates for which the airbnb property was last reviewed or the date when the last review was generated. And if there was no review generated, then there is no date and so we have a missing value in the column.
+
+<BR>
+Neighbourhood group and Room Type
+```{r, echo=FALSE}
+ggplot(data=airbnbdata, aes(x=neighbourhood_group,fill=room_type)) +
+  geom_bar(stat="count",colour="black",position = "dodge")
+
+```
+
+<BR> We can see here, that most of the properties fall in the Brooklyn or Manhattan neighbourhood group, while there very few properties in Bronx and Staten Island.Manhattan and Brooklyn being the most popular destination among the toursits. Also, most of the properties are offering either a Private room or the Entire home/apt, there are very few properties which are offering a Shared room. The reason for this can be that most of the tourists or visitors want privacy and prefer either a private room or to have the entire home/apt for themselves for their convenience.
+
+<BR>
+Price Distribution
+```{r, echo=FALSE}
+ggplot(airbnbdata, aes(x=price)) + geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
+  geom_density(alpha = .2, fill = "#FF6666")
+
+summary(airbnbdata$price)
+```
+<BR>
+We can observe that prices of listing start from less than 100 and maximum price reaches around 10000. The distribution curve shows that most of listings prices ranges below 500.Also, the price is highly skewed.
+
+
+<BR>
+Neighbourhood group and Price
+```{r, echo=FALSE}
+ggplot(airbnbdata, aes(x=neighbourhood_group, y=price,fill=neighbourhood_group))+ geom_boxplot(
+  outlier.colour = "red",
+  outlier.shape = 1,
+  outlier.size = 4
+)
+```
+
+<BR>
+<P>We can see here that the neighbourhood groups Manhattan, Brooklyn and Staten Island have high price. While Bronx has the lowest price. This can be because Manhattan, Brooklyn and Staten Islands are the most expensive neighbourhoods in the New York City.
+<BR>
+
+
+<BR>
+Correlation Matrix
+<BR>
+Analyze the relationship between variables
+```{r, echo=FALSE}
+x <-airbnbdata%>%
+  select(
+    latitude,
+    longitude,
+    price,
+    minimum_nights,
+    number_of_reviews,
+    calculated_host_listings_count,
+    availability_365
+  )
+x<-cor(x)
+corrplot(x, method="number")
+```
+<BR>
+The only strong correlation here is Reviews per Month and number of reviews, which is expected as they are derivative of eachother.
+
+<BR>
+<BR>
+
+<B><font size = 5>
+Feature Engineering
+
+</font></B>
+
+```{r, echo=FALSE}
+set.seed(1)
+
+# filtering out data data, do not consider the records with price =0
+price_data <- airbnbdata %>%
+  select(price,neighbourhood_group,host_id,room_type,minimum_nights
+         ,number_of_reviews,latitude ,longitude, availability_365
+         ,calculated_host_listings_count)%>%filter(price!=0)
+summary(price_data)
+
+```
+
+<B><font size = 5>
+Linear regression to predict price
+</font></B>
+
+```{r, echo=FALSE}
+set.seed(1)
+
+# splitting data into training and testing data
+row.number <- sample(x=1:nrow(price_data), size=0.75*nrow(price_data))
+traindata = price_data[row.number,]
+testdata = price_data[-row.number,]
+
+# building linear model using all the predictors
+linmodel <- lm(price~.,data = traindata)
+summary(linmodel)
+plot(linmodel)
+
+# predicting values of Price for the libear model using test data
+predicted_price_sat_model <- predict(linmodel, newdata = testdata)
+observed_price_sat_model <- testdata$price
+
+# Calculating R2
+SSE <- sum((observed_price_sat_model - predicted_price_sat_model) ^ 2)
+SST <- sum((observed_price_sat_model - mean(observed_price_sat_model))^ 2)
+r2.lin.model <- 1 - SSE/SST
+
+#calcualting MSE
+mean((predicted_price_sat_model -observed_price_sat_model)^2)
+
+#RMSE:
+rmse.lin.model <-
+  sqrt(mean((
+    predicted_price_sat_model - observed_price_sat_model
+  ) ^ 2))
+
+rmse.lin.model
+
+```
+<BR>
+The model accuracy is very poor which could be attributed to the skewed distribution of the target variable price and therefore will perform log transofrmation on price. Also,would filter out the outliers by considering data which lies in the quantile range of 0.1 to 0.9.
+
+<B><font size = 5>
+Linear model with logarithmic transformation 
+</font></B>
+```{r, echo=FALSE}
+set.seed(1)
+
+# log transformationa and removing outlier.
+
+newpricedata <- price_data%>%filter(price <quantile(price_data$price,0.9)&price > quantile(price_data$price,0.1))
+
+row.number <- sample(x=1:nrow(newpricedata), size=0.75*nrow(newpricedata))
+newtraindata = newpricedata[row.number,]
+newtestdata = newpricedata[-row.number,]
+
+secondmodel <- lm(log(price)~.,data=newtraindata)
+summary(secondmodel)
+plot(secondmodel)
+
+# predicting values of Price for the linear logistic model using test data
+predicted_price_new_model <- predict(secondmodel, newdata = newtestdata)
+predicted_price_new_model<- exp(predicted_price_new_model)
+observed_price_new_model <- newtestdata$price
+
+plot(predicted_price_new_model)
+qqnorm( beaver2$temp[beaver2$activ==0], main='Inactive')
+
+# Calculating R2
+SSE <- sum((observed_price_new_model - predicted_price_new_model) ^ 2)
+SST <- sum((observed_price_new_model - mean(observed_price_new_model)) ^ 2)
+r2.new.model <- 1 - (SSE/SST)
+r2.new.model
+
+#RMSE:
+rmse.new.model <-
+  sqrt(mean((
+    predicted_price_new_model - observed_price_new_model
+  ) ^ 2))
+
+rmse.new.model
+
+```
+<BR>
+Plotting the predicted and observed values
+```{r, echo=FALSE}
+# plotting the predicted and observed values -- fairly its linear.
+fin<- tibble(observed = observed_price_new_model, predicted =predicted_price_new_model)
+ggplot(data=fin, aes(x=predicted_price_new_model, y= observed_price_new_model)) +
+  geom_point()+geom_abline(slope=1,intercept = 0,color='red',linetype=2)
+
+```
+<BR>
+After imputing the missing values, removing outliers and transforming (lograthmic transformation) the output variable, Linear model accuracy improved.
+<BR>
+
+<B><font size = 5>
+Ensemble methods
+</font></B>
+<BR>
+Tree based learning algorithms are considered to be one of the best and mostly used supervised learning methods. It empower predictive models with high accuracy, stability and ease of interpretation. Unlike linear models, they map non-linear relationships quite well and are adaptable at solving any kind of problem at hand (classification or regression).
+<BR>
+<BR>
+Encoding Categorical Variables
+```{r, echo=FALSE}
+library(fastDummies)
+airbnbdata2<-dummy_cols(newpricedata, select_columns = c("room_type", "neighbourhood_group"),
+                       remove_first_dummy = FALSE,
+                       remove_most_frequent_dummy = FALSE,
+                       ignore_na = FALSE,
+                       split = NULL,
+                       remove_selected_columns = TRUE)
+                       
+```
+
+<BR>
+Decision Tree
+```{r, echo=FALSE}
+
+# splitting data into training and testing data
+
+colnames(airbnbdata2) <- make.names(colnames(airbnbdata2))
+row.number <- sample(x=1:nrow(airbnbdata2), size=0.75*nrow(airbnbdata2))
+traindata = airbnbdata2[row.number,]
+testdata = airbnbdata2[-row.number,]
+
+# ------------------------------
+# Decision Tree
+# ------------------------------
+library(caret)
+
+dectreemodfit <- train(price~.,method="rpart",data=traindata)
+trainpriceobserved <- traindata$price
+# plot tree 
+library(rattle)
+fancyRpartPlot(dectreemodfit$finalModel)  
+dectreemodfit
+
+#finding training RMSE
+trainpricepred <- predict(dectreemodfit,newdata=traindata)
+trainpriceobserved <- traindata$price
+trainrmse = sqrt(mean((trainpriceobserved-trainpricepred)^2))
+print(paste('Training error:',trainrmse))
+
+# predicting value for test data
+predictedprice<-predict(dectreemodfit,newdata=testdata)
+obserevd <- testdata$price
+testrmse= sqrt(mean((predictedprice-obserevd)^2))
+#testing RMSE
+print(paste('Testing Error:',testrmse))
+
+# Calculating R2
+SSE <- sum((obserevd - predictedprice) ^ 2)
+SST <- sum((obserevd - mean(obserevd)) ^ 2)
+r2_dtree <- 1 - SSE/SST
+                       
+```
+<BR>
+ <p>As we can see from the above the tree, the model has used two predictors room_Type and longitude out of the 9 predictors which gives the maximum information gain. 
+ 
+ <BR>
+<p>Random Forest
+```{r, echo=FALSE}
+# ------------------------------
+# Random Forest
+# ------------------------------
+#install.packages('h2o')
+library(h2o)
+# initializing the the H20 cluster
+h2o.init(nthreads=-1)
+
+row.number <- sample(x=1:nrow(airbnbdata2), size=0.75*nrow(airbnbdata2))
+traindata = airbnbdata2[row.number,]
+testdata = airbnbdata2[-row.number,]
+
+# converting trained and test data.frame into H2O Frame.
+train_hex <- as.h2o(traindata)
+
+testHex<-as.h2o(testdata)
+
+# fetching the name of predictors
+X <- colnames(traindata)[!(colnames(traindata))%in% 'price']
+# fetching the name of output variable
+y = 'price'
+
+#building random forest with default values
+rf <- h2o.randomForest(x=X,
+                            y=y, 
+                            training_frame=train_hex,
+                            validation_frame = testHex,
+                            ntrees=500)
+summary(rf)
+rf@model$validation_metrics
+
+rfpredictions<-as.data.frame(h2o.predict(rf,testHex))
+
+calR2 = function(pred,observed){
+SSE <- sum((observed - pred) ^ 2)
+SST <- sum((observed - mean(observed)) ^ 2)
+r2score <- 1 - (SSE/SST)
+return(r2score)
+  
+}
+
+print(paste('R2 Random Forest : ',calR2(rfpredictions$predict,testdata$price)))
+```
+<P> To improve the execution speed of the model in R, used the H20 package to build the models. H2O is a Java Virtual Machine that is optimized for doing “in memory” processing of distributed, parallel machine learning algorithms on clusters.
+<BR>
+<P>As can be observed from above metrics, With Random Forest model accuracy improved to 0.53
+
+```{r, echo=FALSE}
+# clearing the random forest model created from h20 cluster
+h2o.rm(rf);
+gc()
+```
+<BR>
+<P> Although the prediction accuracy obtained is better than decision tree, the main drawback of Random Forests is the model size and their complexity. They are much harder and time-consuming to construct. They also require more computational resources; it took hundreds of megabytes of memory and was slow to evaluate.
+Another point that some might find a concern is that random forest models are black boxes that are very hard to interpret. 
+ Lastly, we would build the Gradient Boosting Model.
+ 
+  <BR>
+<p> Gradient Boosting
+```{r, echo=FALSE}
+
+# ------------------------------
+# Gradient Boost
+# ------------------------------
+# intializing the the H20 clusture
+h2o.init(nthreads=-1)
+
+#building random forest with default values
+gbmModel <- h2o.gbm(x=X,
+                            y=y, 
+                            training_frame=train_hex,
+                            validation_frame = testHex,
+                            ntrees=500)
+summary(gbmModel)
+gbmModel@model$validation_metrics
+
+gbmpredictions<-as.data.frame(h2o.predict(gbmModel,testHex))
+
+print(paste('R2 Gradient Boost : ',calR2(gbmpredictions$predict,testdata$price)))
+
+h2o.rm(gbmModel);
+gc()
+
+h2o.shutdown()
+```
+<P> 
+<BR>
+The Model accuracy didn't improve compared to Random Forest.
