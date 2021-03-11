@@ -57,11 +57,10 @@ Liner Regression | 0.09
 
 ## Conclusion
 
-Random Forest model gives us the best score in R2 as well as MSE. However, running time of the Random Forest model is more than other models.
+Random Forest model gives us the best score in R2 as well as MSE. However, running time of the Random Forest model is more than other models. Using H2O improved the model execution speed by 70%, was able to build the model in 40 mins.
 
 ## What can be Done to improve accuracy
 
 * Collect more data with more variables.
-* Use H20 to enhance the execution speed of building the model.
 * Models can be trained in lots of parameters to see which one is best. Since it took so much time, I did not train in every possible of combination.
 * Try SVM and Neural Netwroks.
